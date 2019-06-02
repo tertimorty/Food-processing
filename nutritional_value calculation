@@ -1,0 +1,926 @@
+Sub adaptiviesastavi()
+    Dim lngCount As Integer
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("recepte").Columns(4))
+maxcount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+If lngCount = 0 Then
+    MsgBox ("neviena izejviela nav izvēlēta")
+    Exit Sub
+Else
+    i = 5
+    j = 1
+    
+    Do While i <> maxcount + 1
+    
+        If ThisWorkbook.Sheets("recepte").Cells(i, 4).Value <> 0 Then
+        If ThisWorkbook.Sheets("demo").Cells(i, 1).Value <> 0 Then
+        s = 1
+            Do While ThisWorkbook.Sheets("demo").Cells(i, s).Value <> 0
+                ThisWorkbook.Sheets("demo").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("demo").Cells(i, s).Value
+                ThisWorkbook.Sheets("demo1").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("demo1").Cells(i, s).Value * (ThisWorkbook.Sheets("recepte").Cells(i, 6).Value / 100)
+                j = j + 1
+                s = s + 1
+             Loop
+        Else
+        ThisWorkbook.Sheets("demo").Cells(maxcount + 1, j) = i
+        ThisWorkbook.Sheets("demo1").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("recepte").Cells(i, 6).Value
+        j = j + 1
+        End If
+        Else
+        End If
+        i = i + 1
+    Loop
+End If
+End Sub
+
+_________________________________________________________
+
+Sub salikt_ieksh()
+  
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("recepte").Columns(4))
+maxcount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+If lngCount = 0 Then
+    MsgBox ("neviena izejviela nav izvēlēta")
+    Exit Sub
+Else
+    i = 5
+    j = 1
+    
+    
+    Do While i <> maxcount
+    
+            If ThisWorkbook.Sheets("recepte").Cells(i, 4).Value <> 0 Then
+            s = 1
+            If ThisWorkbook.Sheets("demo").Cells(i, s).Value = 0 Then
+            ThisWorkbook.Sheets("recepte1").Cells(i, 4).Value = ThisWorkbook.Sheets("recepte").Cells(i, 4).Value
+            
+            Debug.Print ("1")
+            Debug.Print (ThisWorkbook.Sheets("recepte").Cells(i, 2).Value)
+            Else
+            Do While ThisWorkbook.Sheets("demo").Cells(i, s).Value <> 0
+            rinda = ThisWorkbook.Sheets("demo").Cells(i, s).Value
+            vertiba = ThisWorkbook.Sheets("demo1").Cells(i, s).Value
+            ThisWorkbook.Sheets("recepte1").Cells(rinda, 4).Value = ThisWorkbook.Sheets("recepte1").Cells(rinda, 4).Value + vertiba
+            
+            Debug.Print ("2")
+            Debug.Print (ThisWorkbook.Sheets("recepte").Cells(rinda, 2).Value)
+            s = s + 1
+            
+            Loop
+            End If
+            End If
+        i = i + 1
+    Loop
+End If
+End Sub
+
+_______________________________________________________________________________________
+
+Sub iekopetajs()
+Dim i As Integer
+Dim g As Integer
+
+Cells(1, 11).Interior.Color = 9420794
+Cells(2, 11).Interior.Color = 9420794
+Cells(3, 11).Interior.Color = 9420794
+
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+arange = Sheets("bāze").Cells(5, 7).End(xlDown).Offset(1, 0).Address
+numb = Mid(arange, 4, 4)
+numb = numb + 0
+    g = 4
+    i = 1
+Dim nosaukums As String
+nosaukums = ThisWorkbook.Sheets("marke").Cells(1, 3)
+nosaukums = LCase(nosaukums)
+Debug.Print (nosaukums)
+
+   Do While i <> lngCount
+        acell = Sheets("bāze").Cells(g, 7)
+            If nosaukums = acell Then
+                MsgBox ("šāds produkts jau eksistē šūnā: " & g)
+                g = 0
+                Cells(1, 11).Interior.Color = 16777215
+                Cells(2, 11).Interior.Color = 16777215
+                Cells(3, 11).Interior.Color = 16777215
+                
+                Exit Sub
+            Else
+                 i = i + 1
+                 g = g + 1
+            End If
+    Loop
+    If g = 0 Then
+    Else
+    
+    lngCount1 = numb
+    Sheets("marke").Activate
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 1) = Date 'šodienas datums
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 2) = ThisWorkbook.Sheets("marke").Cells(29, 7).Value 'tk numurs
+        If ThisWorkbook.Sheets("marke").Cells(33, 7).Value <> 0 Then
+            ThisWorkbook.Sheets("bāze").Cells(lngCount1, 3) = ThisWorkbook.Sheets("marke").Cells(33, 7).Value 'porcija
+        Else
+            ThisWorkbook.Sheets("bāze").Cells(lngCount1, 3) = ThisWorkbook.Sheets("marke").Cells(32, 7).Value 'standartsvars
+        End If
+    ThisWorkbook.Sheets("recepte").Cells(lngCount1, 2) = nosaukums 'nosaukums
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 7) = nosaukums 'nosaukums
+    ThisWorkbook.Sheets("nosaukumu_permutacijas").Cells(lngCount1, 1) = nosaukums 'nosaukums
+    
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 8).Value = ThisWorkbook.Sheets("marke").Cells(4, 12).Value ' sastavs
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 10).Value = ThisWorkbook.Sheets("marke").Cells(6, 12).Value ' alergeni
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 4).Value = ThisWorkbook.Sheets("marke").Cells(1, 6).Value ' atlases grupa
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 5).Value = ThisWorkbook.Sheets("marke").Cells(1, 7).Value ' grupa
+    
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 11).Value = ThisWorkbook.Sheets("marke").Cells(3, 12).Value ' tauki
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 12).Value = ThisWorkbook.Sheets("marke").Cells(3, 13).Value ' piesātinātās
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 13).Value = ThisWorkbook.Sheets("marke").Cells(3, 14).Value ' monon.p.
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 14).Value = ThisWorkbook.Sheets("marke").Cells(3, 15).Value ' polin.p.
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 15).Value = ThisWorkbook.Sheets("marke").Cells(3, 16).Value ' olbaltumvielas
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 16).Value = ThisWorkbook.Sheets("marke").Cells(3, 17).Value ' ogļhidrāti
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 17).Value = ThisWorkbook.Sheets("marke").Cells(3, 18).Value ' cukurs
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 18).Value = ThisWorkbook.Sheets("marke").Cells(3, 19).Value ' polioli
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 19).Value = ThisWorkbook.Sheets("marke").Cells(3, 20).Value ' ciete
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 20).Value = ThisWorkbook.Sheets("marke").Cells(3, 21).Value ' šķiedrvielas
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 47).Value = ThisWorkbook.Sheets("marke").Cells(3, 22).Value 'sāls
+    
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 49).Value = ThisWorkbook.Sheets("marke").Cells(46, 12).Value ' E450
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 50).Value = ThisWorkbook.Sheets("marke").Cells(46, 13).Value ' E451
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 51).Value = ThisWorkbook.Sheets("marke").Cells(46, 14).Value ' E452
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 52).Value = ThisWorkbook.Sheets("marke").Cells(46, 15).Value ' E315
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 53).Value = ThisWorkbook.Sheets("marke").Cells(46, 16).Value ' E316
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 54).Value = ThisWorkbook.Sheets("marke").Cells(46, 17).Value ' E621
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 55).Value = ThisWorkbook.Sheets("marke").Cells(46, 18).Value ' E627
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 56).Value = ThisWorkbook.Sheets("marke").Cells(46, 19).Value ' E631
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 57).Value = ThisWorkbook.Sheets("marke").Cells(46, 20).Value ' E120
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 48).Value = ThisWorkbook.Sheets("marke").Cells(46, 21).Value ' E250
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 58).Value = ThisWorkbook.Sheets("marke").Cells(46, 22).Value ' E211
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 59).Value = ThisWorkbook.Sheets("marke").Cells(57, 12).Value ' E250
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 60).Value = ThisWorkbook.Sheets("marke").Cells(57, 13).Value ' E224
+    ThisWorkbook.Sheets("bāze").Cells(lngCount1, 61).Value = ThisWorkbook.Sheets("marke").Cells(57, 14).Value ' E200
+    
+    ''sastādīt demo un demo 1
+
+maxcount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+maxcount = maxcount - 1
+If lngCount = 0 Then
+    MsgBox ("neviena izejviela nav izvēlēta")
+    
+    
+    Exit Sub
+Else
+    i = 5
+    j = 1
+    
+    Do While i <> maxcount
+        If ThisWorkbook.Sheets("recepte").Cells(i, 4).Value <> 0 Then
+        If ThisWorkbook.Sheets("demo").Cells(i, 1).Value <> 0 Then
+        s = 1
+            Do While ThisWorkbook.Sheets("demo").Cells(i, s).Value <> 0
+                ThisWorkbook.Sheets("demo").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("demo").Cells(i, s).Value
+                ThisWorkbook.Sheets("demo1").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("demo1").Cells(i, s).Value * (ThisWorkbook.Sheets("recepte").Cells(i, 6).Value / 100)
+                j = j + 1
+                s = s + 1
+             Loop
+        Else
+        ThisWorkbook.Sheets("demo").Cells(maxcount + 1, j) = i
+        ThisWorkbook.Sheets("demo1").Cells(maxcount + 1, j) = ThisWorkbook.Sheets("recepte").Cells(i, 6).Value
+        j = j + 1
+        End If
+        Else
+        End If
+        i = i + 1
+    Loop
+    End If
+
+''nodarboties ar faila kopijas saglabāšanau jaunā failā
+Dim folderis As String
+Dim Grupa As String
+Dim asas As Integer
+asas = 22
+
+Grupa = ThisWorkbook.Sheets("marke").Cells(1, 7)
+Debug.Print (Grupa)
+Do While asas <> 70
+saraksts = ThisWorkbook.Sheets("saraksti").Cells(asas, 1).Value
+If saraksts = Grupa Then
+folderis = ThisWorkbook.Sheets("saraksti").Cells(asas, 2)
+Else: End If
+asas = asas + 1
+Loop
+Debug.Print (folderis)
+Application.CopyObjectsWithCells = False
+Cells(1, 11).Interior.Color = 16777215
+Cells(2, 11).Interior.Color = 16777215
+Cells(3, 11).Interior.Color = 16777215
+
+ActiveSheet.Copy
+   '' With ActiveSheet
+      ''   .Copy
+        
+      ''   .PasteSpecial xlPasteValues
+  ''  End With
+    Application.CutCopyMode = False
+ActiveWorkbook.SaveAs "N:\Users\Krasta Centrs\_Shared Documents\STANDARTIZACIJA\65 Uzturvērtības\Jaunie\" & folderis & "/UZTV." & nosaukums & ".xlsx"
+''ActiveWorkbook.SaveAs "C:\Users\Kaspars.Blumbergs\Documents\ML/UZTV." & nosaukums & ".xlsx"
+Dim xi As Range
+Set xi = ActiveSheet.Cells
+With xi
+ .Copy
+ .PasteSpecial xlPasteValues
+End With
+    End If
+    ActiveWorkbook.Application.CutCopyMode = False
+  ActiveWorkbook.Close True
+Cells(1, 11).Interior.Color = 16777215
+Cells(2, 11).Interior.Color = 16777215
+Cells(3, 11).Interior.Color = 16777215
+
+End Sub
+Sub pedeja()
+''ThisWorkbook.Sheets("bāze").Cells(5, 7).End(xlDown).Offset(1, 0).Select
+''Debug.Print ThisWorkbook.Sheets("bāze").Cells(5, 7).End(xlDown).Count
+Debug.Print ThisWorkbook.Sheets("bāze").Cells(5, 7).End(xlDown).Count
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+Debug.Print lngCount
+ActiveCell.Value = "laižam dzīvē"
+End Sub
+
+_________________________________________________________________________________________
+
+Sub maksligaisIT1()
+Dim i As Integer
+''šī programma nodarbosies ar tk daļu atpazīšanu un atbilstošu recepte un marke aizpildīšanu
+''Starp recepte un marke aizpildīšanu ir jāpalaizh starprecepte
+
+Dim TKnummurs As String
+Dim TKnummursNosaukums As String
+TKnummursNosaukums = "TK numurs"
+
+ThisWorkbook.Sheets("master").Cells(4, 6).Interior.Color = &HF123&
+TKnummurs = ThisWorkbook.Sheets("master").Cells(4, 6).Value
+ThisWorkbook.Sheets("marke").Cells(29, 7).Value = TKnummurs
+
+Dim Grupa As String
+Dim GrupaNosaukums As String
+
+GrupaNosaukums = "Klasifikatora grupa"
+ThisWorkbook.Sheets("master").Cells(6, 3).Interior.Color = &HF123&
+Grupa = ThisWorkbook.Sheets("master").Cells(6, 3).Value
+ThisWorkbook.Sheets("marke").Cells(1, 7).Value = Grupa
+
+Dim porcijasSvars As Integer
+Dim porcijasSvarsNosaukums As String
+
+porcijasSvarsNosaukums = "Porcijas svars"
+ThisWorkbook.Sheets("master").Cells(8, 6).Interior.Color = &HF123&
+    If IsNumeric(ThisWorkbook.Sheets("master").Cells(8, 6)) Then
+        porcijasSvars = ThisWorkbook.Sheets("master").Cells(8, 6)
+        ThisWorkbook.Sheets("marke").Cells(33, 7).Value = porcijasSvars
+    Else
+    End If
+    
+Dim produtaNosaukums As String
+Dim produktaNosaukumsNosaukums As String
+
+ThisWorkbook.Sheets("master").Cells(8, 3).Interior.Color = &HF123&
+ produktaNosaukums = ThisWorkbook.Sheets("master").Cells(8, 3)
+ThisWorkbook.Sheets("marke").Cells(1, 3).Value = produktaNosaukums
+''info priekš recepte
+
+i = 12
+
+Dim j As Integer
+Dim k As Integer
+
+j = 3
+Dim izejviela As String
+Dim daudzums As Double
+
+ThisWorkbook.Sheets("master").Cells(12, 3).Select
+
+Set myActiveCell = ActiveCell
+Range(ActiveCell, ActiveCell.End(xlDown)).Select
+Dim acell As String
+RowCount = WorksheetFunction.CountA(Selection)
+myActiveCell.Select
+
+Do While i < 12 + RowCount - 1
+izejviela = ThisWorkbook.Sheets("master").Cells(i, j).Value
+
+If IsNumeric(ThisWorkbook.Sheets("master").Cells(i, j + 2)) Then
+      ThisWorkbook.Sheets("master").Cells(i, j + 2).Interior.Color = &HF123&
+        daudzums = ThisWorkbook.Sheets("master").Cells(i, j + 2)
+    Else
+     ThisWorkbook.Sheets("master").Cells(i, j + 2).Interior.Color = &H7A82E6
+    End If
+If ThisWorkbook.Sheets("master").Cells(i, j + 1).Value = "kg" Then
+ ThisWorkbook.Sheets("master").Cells(i, j + 1).Interior.Color = &HF123&
+    Else
+     ThisWorkbook.Sheets("master").Cells(i, j + 1).Interior.Color = &H7A82E6
+    End If
+
+izejviela = LCase(izejviela)
+ThisWorkbook.Sheets("master").Cells(i, j).Interior.Color = &HECE60E
+
+
+Debug.Print (izejviela)
+Debug.Print (daudzums)
+
+With ThisWorkbook.Sheets("nosaukumu_permutacijas").Range("a2:k2500")
+    Set C = .Find(izejviela, LookAt:=xlWhole, LookIn:=xlValues)
+    If Not C Is Nothing Then
+        xx = C.Address
+   
+        Debug.Print "atradu: " & C.Address & " " & C
+    
+        ThisWorkbook.Sheets("master").Cells(i, j).Interior.Color = &HF123&
+      
+    
+        ll = C.Row
+        gbr = ThisWorkbook.Sheets("nosaukumu_permutacijas").Cells(ll, 1).Value
+        ThisWorkbook.Sheets("master").Cells(i, j - 2).Value = gbr
+        Debug.Print gbr
+   
+    Else
+        Debug.Print ("neatradu")
+        ThisWorkbook.Sheets("master").Cells(i, j).Interior.Color = &H7A82E6
+        ThisWorkbook.Sheets("master").Cells(i, j + 2).Interior.Color = &H7A82E6
+    End If
+    End With
+
+i = i + 1
+Loop
+End Sub
+
+''seit sākas ierakstīšana šītā marke
+Sub iekopetajs2()
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+i = 12
+
+Dim j As Integer
+Dim k As Integer
+Dim izejvielas As String
+
+ThisWorkbook.Sheets("master").Cells(12, 3).Select
+Set myActiveCell = ActiveCell
+Range(ActiveCell, ActiveCell.End(xlDown)).Select
+Dim acell As String
+RowCount = WorksheetFunction.CountA(Selection)
+myActiveCell.Select
+
+j = 3
+
+Dim daudzums As Double
+
+Dim zen As Integer
+zen = 5
+pedejasuna = ThisWorkbook.Sheets("master").Cells(12 + RowCount, 1).Value
+Do While i < 12 + RowCount - 1
+    izejviela = ThisWorkbook.Sheets("master").Cells(i, 1).Value
+    ThisWorkbook.Sheets("master").Cells(i, 1).Interior.Color = &HF123&
+     daudzums = ThisWorkbook.Sheets("master").Cells(i, 5).Value
+   pedejasuna = ThisWorkbook.Sheets("master").Cells(12 + RowCount - 1, 1).Value
+  ThisWorkbook.Sheets("master").Cells(12 + RowCount - 1, 1).Value = pedejasuna + daudzums
+  
+  Do While zen <> lngCount + 2
+     
+  If izejviela = ThisWorkbook.Sheets("recepte").Cells(zen, 2).Value Then
+    ThisWorkbook.Sheets("recepte").Cells(zen, 4) = ThisWorkbook.Sheets("recepte").Cells(zen, 4) + daudzums
+    Debug.Print ThisWorkbook.Sheets("recepte").Cells(zen, 2)
+    Exit Do
+  Else: End If
+  zen = zen + 1
+  Loop
+  zen = 5
+  i = i + 1
+Loop
+    If IsNumeric(ThisWorkbook.Sheets("master").Cells(12 + RowCount - 1, 5).Value) Then
+        zudumi = ThisWorkbook.Sheets("master").Cells(12 + RowCount - 1, 1).Value - ThisWorkbook.Sheets("master").Cells(12 + RowCount - 1, 5).Value
+        ThisWorkbook.Sheets("recepte").Cells(114, 4).Value = zudumi * (-1)
+    Else: End If
+End Sub
+Sub atkrasotsunas3()
+
+Dim j As Integer
+    i = 1
+    j = 1
+Do While j < 10
+    Do While i < 70
+        If ThisWorkbook.Sheets("master").Cells(i, j).Interior.Color = &HF123& Then
+         ThisWorkbook.Sheets("master").Cells(i, j).Interior.colorindex = white
+        Else: End If
+        If ThisWorkbook.Sheets("master").Cells(i, j).Interior.Color = &H7A82E6 Then
+         ThisWorkbook.Sheets("master").Cells(i, j).Interior.colorindex = white
+        Else: End If
+        
+        i = i + 1
+    Loop
+    i = 1
+    j = j + 1
+Loop
+ThisWorkbook.Sheets("recepte").Columns("D").ClearContents
+ThisWorkbook.Sheets("master").Range("A1:A50").ClearContents
+ThisWorkbook.Sheets("marke").Cells(29, 7).ClearContents
+ThisWorkbook.Sheets("marke").Cells(1, 7).ClearContents
+ThisWorkbook.Sheets("marke").Cells(33, 7).ClearContents
+ThisWorkbook.Sheets("marke").Cells(1, 3).MergeArea.ClearContents
+
+End Sub
+
+_______________________________________________________________
+
+Option Explicit
+Sub permutacijas()
+''panjemt vārdu no saraksta, atrast kursh paizm sarakstā satur sho vārdu un iekopēt to shi saraksta tajaa pashaa rindā pirmajā tushajaa kolonnā
+
+Dim i As Integer
+Dim j As Integer
+Dim ii As Integer
+Dim jj As Integer
+Dim k As Integer
+Dim meklejamais As String
+Dim maxcount As Integer
+Dim maxcount1 As Integer
+Dim iemeklejamais As String
+Dim posOf_A As Integer
+    ii = 1
+    jj = 2
+    i = 4
+    j = 1
+    k = 1
+maxcount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("nosaukumu_permutacijas").Columns(1))
+maxcount1 = Application.WorksheetFunction.CountA(Application.Workbooks("Datubaze").Sheets("Pašizm").Columns(1))
+
+Do While i < maxcount + 1
+    meklejamais = Application.Workbooks("meginajums 4.6233 - Copy").Sheets("nosaukumu_permutacijas").Cells(i, j).Value
+    Debug.Print (i & meklejamais)
+    Do While ii <> maxcount1
+    iemeklejamais = Application.Workbooks("Datubaze").Sheets("Pašizm").Cells(ii, jj).Value
+    posOf_A = InStr(1, iemeklejamais, meklejamais, vbTextCompare)
+        If posOf_A > 0 Then
+            
+            k = k + 1
+        Application.Workbooks("meginajums 4.6233 - Copy").Sheets("nosaukumu_permutacijas").Cells(i, k).Value = Application.Workbooks("Datubaze").Sheets("Pašizm").Cells(ii, jj).Value
+                Debug.Print ("  " & iemeklejamais)
+            Else
+        End If
+        ii = ii + 1
+        
+    Loop
+    jj = 2
+    ii = 1
+    k = 1
+    i = i + 1
+    Debug.Print (meklejamais)
+Loop
+    i = 1
+End Sub
+__________________________________________________________________
+
+Option Explicit
+Sub sakartotPecDaudzumiem()
+
+Dim lngCount As Integer
+Dim i As Integer
+Dim j As Integer
+Dim starpsumma As Double
+Dim lineCount As Integer
+Dim k As Integer
+
+k = 1
+i = 939
+j = 1
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+
+Debug.Print (lngCount)
+    Do While i <> lngCount + 1
+        
+       If Sheets("demo1").Cells(i, j).Value <> 0 Then
+       lineCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("demo1").Rows(i))
+       Debug.Print (lineCount)
+       Do While k <> lineCount
+       Debug.Print (k)
+       
+        Do While Sheets("demo1").Cells(i, j + 1).Value <> 0
+        
+        If Sheets("demo1").Cells(i, j + 1).Value > Sheets("demo1").Cells(i, j).Value Then
+        
+       starpsumma = Sheets("demo1").Cells(i, j + 1).Value
+       Sheets("demo1").Cells(i, j + 1).Value = Sheets("demo1").Cells(i, j).Value
+       Sheets("demo1").Cells(i, j).Value = starpsumma
+       starpsumma = 0
+       starpsumma = Sheets("demo").Cells(i, j + 1).Value
+       Sheets("demo").Cells(i, j + 1).Value = Sheets("demo").Cells(i, j).Value
+       Sheets("demo").Cells(i, j).Value = starpsumma
+       starpsumma = 0
+         
+       Else: End If
+       j = j + 1
+      
+      Loop
+        j = 1
+       k = k + 1
+      Loop
+      k = 1
+     
+       i = i + 1
+       Else: End If
+     
+       
+    Loop
+    i = 939
+End Sub
+Sub saliktJaunosSastAVUS()
+
+Dim lngCount As Integer
+Dim i As Integer
+Dim j As Integer
+Dim starpsumma As Double
+Dim lineCount As Integer
+Dim k As Integer
+Dim nosaukums As String
+Dim daudzums As Integer
+Dim sastavs As String
+
+k = 1
+i = 939
+j = 1
+lngCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+
+Debug.Print (lngCount)
+    Do While i <> lngCount + 1
+    
+    lineCount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("demo1").Rows(i))
+       nosaukums = Sheets("bāze").Cells(i, 7).Value
+       Sheets("demo2").Cells(i, 2).Value = nosaukums
+       
+       Do While j <> lineCount
+         daudzums = Sheets("demo").Cells(i, j).Value
+         Debug.Print (daudzums)
+         If Sheets("bāze").Cells(daudzums, 8).Value = "" Then
+         
+         If sastavs = "" Then
+         sastavs = Sheets("bāze").Cells(daudzums, 7).Value
+         Else
+         sastavs = sastavs + ", " + Sheets("bāze").Cells(daudzums, 7).Value
+         End If
+         Else
+         If sastavs = "" Then
+         sastavs = Sheets("bāze").Cells(daudzums, 7).Value + Sheets("bāze").Cells(daudzums, 7).Value
+         Else
+         sastavs = sastavs + ", " + Sheets("bāze").Cells(daudzums, 7).Value + " (" + Sheets("bāze").Cells(daudzums, 7).Value + ")"
+ End If
+ End If
+j = j + 1
+Loop
+Debug.Print (sastavs)
+Sheets("demo2").Cells(i, 3).Value = sastavs
+j = 1
+i = i + 1
+nosaukums = ""
+daudzums = 0
+sastavs = ""
+
+Loop
+i = 1
+
+End Sub
+
+_____________________________________________
+
+Option Explicit
+
+Sub sastaditSastavusPecJaunasMetodes()
+Dim maximum As Integer
+Dim i As Integer
+Dim j As Integer
+Dim daudzums As Double
+Dim maxcount As Integer
+Dim nosaukums As String
+Dim alergeni As String
+Dim k As Integer
+Dim sastavs As Integer
+Dim sastavs_daudzums As Double
+Dim daudzums_procentos As Double
+Dim sastavs_nosaukums As String
+Dim daudzums_kopa As Double
+Dim maxalergeni As Integer
+Dim m As Integer
+
+k = 1
+i = 2
+j = 4
+m = 1
+
+maxcount = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("bāze").Columns(7))
+Debug.Print ("maxcount= " & maxcount)
+
+Do While i <> maxcount
+
+    daudzums = ThisWorkbook.Sheets("recepte1").Cells(i, j).Value
+    daudzums_procentos = ThisWorkbook.Sheets("recepte1").Cells(i, j + 2) / 100
+    
+    If daudzums <> 0 Then
+    Debug.Print ("daudzums = " & daudzums & " i=" & i)
+    nosaukums = ThisWorkbook.Sheets("nosaukumu_permutacijas").Cells(i, 1).Value
+    Debug.Print ("nosaukums = " & nosaukums)
+        
+        sastavs = ThisWorkbook.Sheets("demo").Cells(i, 1).Value
+        sastavs_nosaukums = ThisWorkbook.Sheets("bāze").Cells(sastavs, 7).Value
+        sastavs_daudzums = ThisWorkbook.Sheets("demo1").Cells(i, 1).Value
+         Debug.Print ("sastavdalja = " & sastavs_nosaukums & "; daudzums  " & sastavs_daudzums)
+          daudzums_kopa = daudzums_kopa + sastavs_daudzums * daudzums_procentos
+        maximum = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("demo").Rows(i))
+            Do While m < maximum
+            m = m + 1
+                If ThisWorkbook.Sheets("demo").Cells(i, m).Value <> "" Then
+                    sastavs = ThisWorkbook.Sheets("demo").Cells(i, m).Value
+                    sastavs_nosaukums = ThisWorkbook.Sheets("bāze").Cells(sastavs, 7).Value
+                    sastavs_daudzums = ThisWorkbook.Sheets("demo1").Cells(i, m).Value
+                End If
+                Debug.Print ("sastavdalja = " & sastavs_nosaukums & "; daudzums  " & sastavs_daudzums)
+               daudzums_kopa = daudzums_kopa + sastavs_daudzums * daudzums_procentos
+            Loop
+            m = 1
+        
+    alergeni = ThisWorkbook.Sheets("alergeni").Cells(i, 1).Value
+    maxalergeni = Application.WorksheetFunction.CountA(ThisWorkbook.Sheets("alergeni").Rows(i))
+        If alergeni <> "" Then
+            Do While k < maxalergeni
+                k = k + 1
+                If ThisWorkbook.Sheets("alergeni").Cells(i, k).Value <> "" Then
+                    alergeni = alergeni + ", " + ThisWorkbook.Sheets("alergeni").Cells(i, k).Value
+                End If
+            Loop
+            k = 1
+            Debug.Print ("alergeni = " & alergeni)
+        End If
+    End If
+    
+i = i + 1
+Loop
+Debug.Print (daudzums_kopa)
+End Sub
+
+______________________________________________________________
+
+Sub iekopēt_vērtības()
+''iekrāso šūnas oranžas lai zin ka process ir sācis
+Cells(1, 11).Interior.Color = 9420794
+Cells(2, 11).Interior.Color = 9420794
+Cells(3, 11).Interior.Color = 9420794
+''iekrāso šūnas sarkanas ja notiek tauku aprēķini (gaļām tauku zudumi tiek ņemti vēr''a termiskās apstrādes laikā)
+Dim a As Variant
+    If ThisWorkbook.Sheets("recepte").Range("E90").Value <> 0 Then
+        ThisWorkbook.Sheets("marke").Cells(3, 12).Interior.Color = RGB(255, 0, 0)
+        ThisWorkbook.Sheets("marke").Cells(3, 13).Interior.Color = RGB(255, 0, 0)
+        ThisWorkbook.Sheets("marke").Cells(3, 14).Interior.Color = RGB(255, 0, 0)
+        ThisWorkbook.Sheets("marke").Cells(3, 15).Interior.Color = RGB(255, 0, 0)
+    Else
+        ThisWorkbook.Sheets("marke").Cells(3, 12).Interior.Color = RGB(255, 255, 255)
+        ThisWorkbook.Sheets("marke").Cells(3, 13).Interior.Color = RGB(255, 255, 255)
+        ThisWorkbook.Sheets("marke").Cells(3, 14).Interior.Color = RGB(255, 255, 255)
+        ThisWorkbook.Sheets("marke").Cells(3, 15).Interior.Color = RGB(255, 255, 255)
+    End If
+    ''iekopē uzturvielu vērtības šūnās -  l m n o p -  u.c.
+ThisWorkbook.Sheets("marke").Cells(3, 12).Value = Cells(32, 3) ' tauki
+ThisWorkbook.Sheets("marke").Cells(3, 13).Value = Cells(33, 3) ' piesātinātās
+ThisWorkbook.Sheets("marke").Cells(3, 14).Value = Cells(34, 3) ' monon.p.
+ThisWorkbook.Sheets("marke").Cells(3, 15).Value = Cells(35, 3) ' polin.p.
+ThisWorkbook.Sheets("marke").Cells(3, 16).Value = Cells(40, 3) ' olbaltumvielas
+ThisWorkbook.Sheets("marke").Cells(3, 17).Value = Cells(36, 3) ' ogļhidrāti
+ThisWorkbook.Sheets("marke").Cells(3, 18).Value = Cells(37, 3) ' cukurs
+ThisWorkbook.Sheets("marke").Cells(3, 19).Value = Cells(38, 3) ' polioli
+ThisWorkbook.Sheets("marke").Cells(3, 20).Value = Cells(39, 3) ' ciete
+ThisWorkbook.Sheets("marke").Cells(3, 21).Value = Cells(41, 3) ' šķiedrvielas
+ThisWorkbook.Sheets("marke").Cells(3, 22).Value = Cells(42, 3) 'sāls
+
+''salikt alergenu tekstus neatkārtojot alergēnus, nelikt velreiz, ja tāds jau ir tekstā
+
+Dim alerg As Integer
+Dim alergeni As String
+alergeni = ""
+alerg = 3
+    Do Until alerg = 28
+    
+    allergg = ThisWorkbook.Sheets("marke").Cells(alerg, 7).Value
+    If allergg <> "-" Then
+    tekstini = ThisWorkbook.Sheets("marke").Cells(alerg, 7).Value
+    posiz = InStr(1, alergeni, tekstini, 1)
+    If posiz = 0 Then
+    If alergeni = "" Then
+    allerggg = CStr(Cells(alerg, 7))
+        If allerggg <> 0 Then
+        Else
+         allerggg = ""
+        End If
+     alergeni = allerggg
+    Else: alergeni = alergeni & ", " + CStr(Cells(alerg, 7))
+    End If
+    Else
+    End If
+       
+    Else
+    End If
+    alerg = alerg + 1
+    posiz = 0
+    Loop
+     ThisWorkbook.Sheets("marke").Cells(6, 12).Value = alergeni
+    
+z = 3
+    Do Until z = 29
+        If Cells(z, 2).Value > 0 Then
+            i = i + 1
+            z = z + 1
+        Else
+            z = z + 1
+        End If
+    Loop
+l = 1
+g = 3
+k = 3
+s = Cells(3, 2).Value
+    If Cells(3, 6) <> "-" Then
+        WW = Cells(3, 6).Value ''daudzums procentos pirmajam produktam sarakstā
+        If WW > 50 Then
+        WW = Round(WW, [0])
+        ElseIf WW > 10 Then
+        WW = Round(WW, [1])
+        Else
+        WW = Round(WW, [2])
+        End If
+        
+        s = s & " (" & WW & "%" & ")"
+    Else
+        s = s
+    End If
+    Do Until l = i + 1
+        If Cells(g, k).Value = 0 Then
+            l = l + 1
+            k = k - 1
+            g = g + 1
+        Else
+            s = s & " (" & Cells(g, k).Value & ")"
+            k = k - 1
+            g = g + 1
+            l = l + 1
+        End If
+        If Cells(g, k).Value = 0 Then
+            k = k + 1
+        Else
+            s = s & ", " & Cells(g, k).Value
+            k = k + 1
+        End If
+        If Cells(g, k + 3) = "-" Then
+        Else
+            QQ = Cells(g, k + 3).Value
+            If QQ > 50 Then
+        QQ = Round(QQ, [0])
+        ElseIf QQ > 10 Then
+        QQ = Round(QQ, [1])
+        Else
+        QQ = Round(QQ, [2])
+        End If
+            s = s & " (" & QQ & "%" & ")"
+        End If
+    Loop
+Cells(4, 12) = s
+    If Cells(4, 3) = 0 Then
+        Cells(62, 3) = "Sastāvdaļas: " & s
+    Else
+        Cells(62, 3) = "Sastāvdaļas: " & ThisWorkbook.Sheets("marke").Range("L4")
+    End If
+go = ThisWorkbook.Sheets("marke").Cells(30, 3).Value
+ho = ThisWorkbook.Sheets("marke").Cells(31, 3).Value
+qo = Round(go, [0])
+wo = Round(ho, [0])
+ao = ThisWorkbook.Sheets("marke").Cells(3, 12).Value
+    If ao < 10 Then
+    ao = Round(ThisWorkbook.Sheets("marke").Cells(3, 12), [1])
+    Else
+    ao = Round(ThisWorkbook.Sheets("marke").Cells(3, 12), [0])
+    End If
+bo = ThisWorkbook.Sheets("marke").Cells(3, 13).Value
+    If bo < 10 Then
+    bo = Round(ThisWorkbook.Sheets("marke").Cells(3, 13), [2])
+    Else
+    bo = Round(ThisWorkbook.Sheets("marke").Cells(3, 13), [1])
+    End If
+co = ThisWorkbook.Sheets("marke").Cells(3, 17).Value
+    If co < 10 Then
+    co = Round(ThisWorkbook.Sheets("marke").Cells(3, 17), [1])
+    Else
+    co = Round(ThisWorkbook.Sheets("marke").Cells(3, 17), [0])
+    End If
+di = ThisWorkbook.Sheets("marke").Cells(3, 18).Value
+    If di < 10 Then
+    di = Round(ThisWorkbook.Sheets("marke").Cells(3, 18), [2])
+    Else
+    di = Round(ThisWorkbook.Sheets("marke").Cells(3, 18), [1])
+    End If
+eo = ThisWorkbook.Sheets("marke").Cells(3, 16).Value
+    If eo < 10 Then
+    eo = Round(ThisWorkbook.Sheets("marke").Cells(3, 16), [1])
+    Else
+    eo = Round(ThisWorkbook.Sheets("marke").Cells(3, 16), [0])
+    End If
+Fo = ThisWorkbook.Sheets("marke").Cells(3, 22).Value
+    If Fo < 1 Then
+    Fo = Round(ThisWorkbook.Sheets("marke").Cells(3, 22), [2])
+    Else
+    Fo = Round(ThisWorkbook.Sheets("marke").Cells(3, 22), [1])
+    End If
+    
+    
+    
+    ''sastāda uzturv'wertību stringus trijās valodās
+    
+    
+    
+Dim txt As String
+txt = "Uzturvērtība 100g produkta: Enerģētiskā vērtība: "
+txt = txt & qo & "kJ/ "
+txt = txt & wo & "kcal,"
+txt = txt & " tauki: " & ao & "g,"
+txt = txt & " tostarp piesātinātās taukskābes: " & bo & "g,"
+txt = txt & " ogļhidrāti: " & co & "g,"
+txt = txt & " tostarp cukuri: " & di & "g,"
+txt = txt & " olbaltumvielas: " & eo & "g,"
+txt = txt & " sāls: " & Fo & "g"
+Cells(5, 12) = txt
+Cells(64, 3) = txt
+
+Dim TXT1 As String
+TXT1 = "Toitumisalane teave 100g : Energia sisaldus: "
+TXT1 = TXT1 & qo & "kJ/ "
+TXT1 = TXT1 & wo & "kcal,"
+TXT1 = TXT1 & " rasvad: " & ao & "g,"
+TXT1 = TXT1 & " millest külastund: " & bo & "g,"
+TXT1 = TXT1 & " süsivesikud: " & co & "g,"
+TXT1 = TXT1 & " millest suhkruid: " & di & "g,"
+TXT1 = TXT1 & " valgud: " & eo & "g,"
+TXT1 = TXT1 & " sool: " & Fo & "g"
+Cells(5, 26) = TXT1
+
+Dim TXT2 As String
+TXT2 = "Nährwerte pro 100 g: Brennwert: "
+TXT2 = TXT2 & qo & "kJ/ "
+TXT2 = TXT2 & wo & "kcal,"
+TXT2 = TXT2 & " Fett: " & ao & "g,"
+TXT2 = TXT2 & " davon gesättigte Fettsäuren: " & bo & "g,"
+TXT2 = TXT2 & " Kohlenhydrate: " & co & "g,"
+TXT2 = TXT2 & " davon Zucker: " & di & "g,"
+TXT2 = TXT2 & " Eiweiß: " & eo & "g,"
+TXT2 = TXT2 & " Salz: " & Fo & "g"
+Cells(6, 26) = TXT2
+    If Cells(6, 12).Value <> "" Then
+    Rows(63).RowHeight = 25
+    Cells(63, 3) = "satur: " & Cells(6, 12)
+    Else
+    Rows(63).RowHeight = 1
+    End If
+Cells(63, 3).Characters(1, 6).Font.Bold = True
+Cells(62, 3).Characters(1, 11).Font.Bold = True
+Cells(64, 3).Characters(1, 26).Font.Bold = True
+
+If Cells(4, 2).Value = 0 Then
+''bizzerba tekstu sastadītājs
+
+    Dim pilnsteksts As String
+    pilnsteksts = ThisWorkbook.Sheets("marke").Range("B3")
+    pilnsteksts = UCase(pilnsteksts)
+    pilnsteksts = pilnsteksts & Chr(10) & "Sastāvdaļas: " & ThisWorkbook.Sheets("marke").Cells(3, 3)
+        If ThisWorkbook.Sheets("marke").Cells(6, 12).Value <> "" Then
+            pilnsteksts = pilnsteksts & Chr(10) & "Satur: " & ThisWorkbook.Sheets("marke").Cells(6, 12)
+        Else
+        End If
+    pilnsteksts = pilnsteksts & Chr(10) & ThisWorkbook.Sheets("marke").Cells(5, 12)
+    ThisWorkbook.Sheets("marke").Cells(3, 26) = pilnsteksts
+    
+    Else
+    ThisWorkbook.Sheets("marke").Cells(3, 26) = "Izvēlies tikai 1 produktu lai sastādītu produktam bizzerba etiķeti"
+    End If
+    ''atkrāso oranžās šūnas
+    
+Cells(1, 11).Interior.Color = 16777215
+Cells(2, 11).Interior.Color = 16777215
+Cells(3, 11).Interior.Color = 16777215
+
+    
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
